@@ -1,4 +1,5 @@
 extends "GUMM_mod.gd"
+
 func _initialize(scene_tree):
 	var spawner = AutoSplitter.new()
 	spawner.gumm = self
@@ -13,10 +14,12 @@ class AutoSplitter extends Node:
 	var tcp_client = StreamPeerTCP.new()
 	var error
 	var title:Control = null
+	var creditser = Label.new()
 	
+	var canSplitOnOrbWeapon = true
+
 	func _ready():
 		get_tree().node_added.connect(on_new_node)
-		path = gumm.base_path
 		for i in get_tree().root.get_children():
 			if i.name == "OMmodUtils":
 				modUtils = i
@@ -25,48 +28,58 @@ class AutoSplitter extends Node:
 		postReady()
 		
 	func postReady():
-		print("func `postReady()` got called")
-		
-		var error = tcp_client.connect_to_host("127.0.0.1", 16834)
-		print("before that while statement")
-		while tcp_client.get_status() != tcp_client.STATUS_CONNECTED:
-			print(tcp_client.get_status())
-			print("during that while statement")
-			tcp_client.poll()
-			continue
-		print("after that while statement")
+		creditser.text = "autosplitter by kr1v
+
+"
+		creditser.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		creditser.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+		creditser.autowrap_mode = TextServer.AUTOWRAP_OFF
+		creditser.label_settings = LabelSettings
+		creditser.justification_flags = TextServer.JUSTIFICATION_KASHIDA
+		creditser.justification_flags = TextServer.JUSTIFICATION_WORD_BOUND
+		creditser.justification_flags = TextServer.JUSTIFICATION_SKIP_LAST_LINE
+		error = tcp_client.connect_to_host("127.0.0.1", 16834)
+		for n in 60:
+			if tcp_client.get_status() == tcp_client.STATUS_CONNECTED:
+				print("connected to livesplit")
+				break
+			else: 
+				print(tcp_client.get_status())
+				tcp_client.poll()
+			if n == 1:
+				print("failed connecting. is the livesplit server running?")
+				tcp_client.disconnect_from_host()
 		modUtils.addCustomOptionTab("speedrun")
 		modUtils.addCustomToggleOption("", "split on boss spawn", "speedrun", "splitOnSpawn", false)
 		modUtils.addCustomToggleOption("", "split on ultra weapon", "speedrun", "splitOnUltraWeapon", false)
 		modUtils.addCustomToggleOption("", "split on escape", "speedrun", "splitOnEscape", false)
 		modUtils.addCustomToggleOption("useful for 100% speedruns", "reset on death", "speedrun", "resetOnDeath", true)
+		modUtils.addCustomToggleOption("useful for 100% speedruns", "reset on exit", "speedrun", "resetOnExit", true)
 		modUtils.addCustomToggleOption("useful for death% speedruns", "split on death", "speedrun", "splitOnDeath", false)
 		modUtils.bossDied.connect(handle_boss_died)
 		modUtils.onMain.connect(handle_start)
 		modUtils.onTitle.connect(handle_reset)
 		modUtils.bossSpawned.connect(handle_boss_spawn)
 		modUtils.onEscape.connect(handle_escape)
-		
-		if error != OK:
-			print("couldnt connect to livesplit server, caused by: `", error, "`")
 			
 		if error == OK:
-			print("yay :DDD")
 			tcp_client.set_no_delay(true)
 			tcp_client.poll()
-			print("poll:", tcp_client.poll())
-		var host = tcp_client.get_connected_host()
-		var port = tcp_client.get_connected_port()
-		var localport = tcp_client.get_local_port()
-		var status = tcp_client.get_status()
-		print("
+			var host = tcp_client.get_connected_host()
+			var port = tcp_client.get_connected_port()
+			var localport = tcp_client.get_local_port()
+			var status = tcp_client.get_status()
+			print("
 host: ", host, "
 port: ", port, "
 localport: ", localport, "
 status: ", status, "
-")
-	var canSplitOnOrbWeapon = true
-	func _process(delta) -> void:
+")		
+		else:
+			print("help somethihng went wring") # <-- if this line runs youve done something wrong
+	
+	
+	func _process(_delta) -> void:
 		# print("func `_process()` got called")
 		if Global.ultraUpgrade && Global.options["splitOnUltraWeapon"] && canSplitOnOrbWeapon:
 			canSplitOnOrbWeapon = false
@@ -79,13 +92,20 @@ status: ", status, "
 				split()
 		
 	func on_new_node(node:Node):
+		if node.get_script() != null:
+			print("1")
+			if node.get_script().get_path() == "res://src/title/panel/creditsScreen.gd":
+				print("2")
+				if node.get_node("MarginContainer2/ScrollContainer/MarginContainer/credits"):
+					var vbox = node.get_node("MarginContainer2/ScrollContainer/MarginContainer")
+					vbox.add_child(creditser)
+					print("3")
+		
 		if node.name == "OMmodUtils" and modUtils==null:
 			modUtils = node
 			postReady()
 		elif modUtils==null:
 			return
-
-
 	
 	func handle_boss_spawn(node):
 		if Global.options["splitOnSpawn"]:
@@ -100,13 +120,15 @@ status: ", status, "
 			split()
 		
 	func handle_reset(node):
-		reset()
+		if Global.options["resetOnExit"]:
+			reset()
 	
 	func handle_boss_died(node):
 		split()
 	
-	func handle_start(node):
-		reset()
+	func handle_start(_node):
+		if Global.options["resetOnDeath"]:
+			reset()
 		start()
 
 		
