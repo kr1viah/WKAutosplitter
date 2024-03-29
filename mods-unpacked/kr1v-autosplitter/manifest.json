@@ -1,0 +1,78 @@
+{
+	"name": "autosplitter",
+	"namespace": "kr1v",
+	"version_number": "1.0.0",
+	"description": "autospitter for the hit game windowkill (sponsored by wiicursors)",
+	"website_url": "",
+	"dependencies": ["ombrellus-modutils"],
+	"extra": {
+		"godot": {
+			"authors": ["kr1v"],
+			"tags": ["speedrun"],
+			"description_rich": "",
+			"optional_dependencies": [],
+			"load_before": [],
+			"incompatibilities": [],
+			"compatible_mod_loader_version": ["6.2.0"],
+			"compatible_game_version": ["3.2.0"],
+			"config_schema": {
+				"$schema": "https://json-schema.org/draft/2020-12/schema",
+				"title": "Config",
+				"description": "Config",
+				"type": "object",
+				"properties": {
+					"splitOnDeath": {
+						"title": "split when dying",
+						"type": "boolean",
+						"default": false
+					},
+					"resetOnDeath": {
+						"title": "reset on death",
+						"type": "boolean",
+						"default": true
+					},
+					"resetOnExit": {
+						"title": "reset on exit",
+						"type": "boolean",
+						"default": true
+					},
+					"splitOnEscaped": {
+						"title": "split when having escaped the window",
+						"type": "boolean",
+						"default": false
+					},
+					"splitOnBrokenWindow": {
+						"title": "split when having broken the window",
+						"type": "boolean",
+						"default": false
+					},
+					"resetOnExit": {
+						"title": "reset on exiting to title screen",
+						"type": "boolean",
+						"default": true
+					},
+					"splitOnBossSpawn": {
+						"title": "split when a boss spawns",
+						"type": "boolean",
+						"default": false
+					},
+					"splitOnUltraWeapon": {
+						"title": "split on gaining the orb weapon",
+						"type": "boolean",
+						"default": false
+					},
+					"splitOnToken": {
+						"title": "split upon collecting a token",
+						"type": "boolean",
+						"default": false
+					},
+					"splitOnTokenUpgrade": {
+						"title": "split when having bought a perk",
+						"type": "boolean",
+						"default": false
+					}
+				}
+			}
+		}
+	}
+}
