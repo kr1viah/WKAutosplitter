@@ -3,17 +3,16 @@ extends Node
 const AUTHORNAME_MODNAME_DIR := "kr1v-autosplitter"
 const AUTHORNAME_MODNAME_LOG_NAME := "kr1v-autosplitter:Main"
 
-@onready var utils:Node = get_node("/root/ModLoader/ombrellus-modutils")
 
 var mod_dir_path := ""
 var extensions_dir_path := ""
 var translations_dir_path := ""
 
 var Global1:Node
+var oldTokenVar
 var tcp_client = StreamPeerTCP.new()
 var error
 var config
-var oldTokenVar
 var canSplitOnOrbWeapon = true
 var canSplitOnUltraBossWon = true
 var canResetInTitle = false
@@ -33,8 +32,35 @@ func _init() -> void:
 	postinit()
 	
 func postinit():
-	print("test")
-	error = tcp_client.connect_to_host("127.0.0.1", 16834)
+	pass
+func install_script_extensions() -> void:
+	extensions_dir_path = mod_dir_path.path_join("extensions")
+	ModLoaderMod.install_script_extension("res://mods-unpacked/kr1v-autosplitter/extensions/src/autoload/global.gd")
+	#ModLoaderMod.install_script_extension("res://mods-unpacked/kr1v-autosplitter/extensions/src/element/power_token/powerToken.gd")
+
+func _on_current_config_changed(config: ModConfig) -> void:
+	if config.mod_id == "kr1v-autosplitter":
+		print("config changes")
+		Global1.apply_config.emit(config) # help
+
+func _ready() -> void:
+	config = ModLoaderConfig.get_current_config("kr1v-autosplitter")
+	
+	oldTokenVar = Stats.stats.totalTokens
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	Events.bossSpawned.connect(handle_boss_spawn) # 
+	Events.bossKilled.connect(handle_boss_died) #
+	Events.runStarted.connect(handle_start) #
+	Events.runEnded.connect(handle_game_over)
+	Events.perkBought.connect(handle_split_on_perk)
+	Events.titleReturn.connect(handle_reset)
+	Events.windowBroken.connect(handle_window_broken)
+	Events.windowEscaped.connect(handle_escape)
+	ModLoader.current_config_changed.connect(_on_current_config_changed)
+	
+	ModLoaderLog.info("Ready!", AUTHORNAME_MODNAME_LOG_NAME)
+	
+	error = tcp_client.connect_to_host("127.0.0.1", config.data.portToConnect)
 	for n in 60: # connects to livesplit for 60 frames
 		if tcp_client.get_status() == tcp_client.STATUS_CONNECTED:
 			print("connected to livesplit")
@@ -42,7 +68,7 @@ func postinit():
 		else: 
 			print(tcp_client.get_status())
 			tcp_client.poll()
-		if n == 1:
+		if n == 59:
 			print("failed connecting. is the livesplit server running?")
 			tcp_client.disconnect_from_host()
 	if error == OK:
@@ -61,52 +87,27 @@ status: ", status, "
 	else:
 		print("help somethihng went wring") # <-- if this line runs youve done something wrong, liek verty veri wrong
 
-func install_script_extensions() -> void:
-	extensions_dir_path = mod_dir_path.path_join("extensions")
-	ModLoaderMod.install_script_extension("res://mods-unpacked/kr1v-autosplitter/extensions/src/autoload/global.gd")
 
-func _on_current_config_changed(config: ModConfig) -> void:
-	if config.mod_id == "kr1v-autosplitter":
-		print("config changes")
-		Global1.apply_config.emit(config) # help
 
-func _ready() -> void:
-	process_mode = Node.PROCESS_MODE_ALWAYS
-	oldTokenVar = Global.tokens
-	Events.bossSpawned.connect(handle_boss_spawn) # 
-	Events.bossKilled.connect(handle_boss_died) #
-	Events.runStarted.connect(handle_start) #
-	Events.runEnded.connect(handle_game_over)
-	Events.perkBought.connect(handle_split_on_perk)
-	Events.titleReturn.connect(handle_reset)
-	Events.windowBroken.connect(handle_window_broken)
-	Events.windowEscaped.connect(handle_escape)
-	
-	config = ModLoaderConfig.get_current_config("kr1v-autosplitter")
-	# Connect to current_config_changed signal
-	ModLoader.current_config_changed.connect(_on_current_config_changed)
-	print(config)
-	print(config.get_data_as_string())
-	
-	ModLoaderLog.info("Ready!", AUTHORNAME_MODNAME_LOG_NAME)
-	
+
+
 func _disable():
 	Global.disable.emit()
 
-func process(_delta) -> void:
-		if Global.tokens > oldTokenVar && config.data.splitOnToken:
-			oldTokenVar = Global.tokens
-			print("token obtained")
-			split()
-		# print("func `_process()` got called")
-		if Global.ultraUpgrade && config.data.splitOnUltraWeapon && canSplitOnOrbWeapon:
-			canSplitOnOrbWeapon = false
-			print("ultraUpgrade")
-			split()
-		if Global.ultraBossWon && canSplitOnUltraBossWon:
-			canSplitOnUltraBossWon = false
-			print("ultra bios won")
-			split()
+func _process(_delta) -> void:
+	if Stats.stats.totalTokens > oldTokenVar && config.data.splitOnToken:
+		oldTokenVar = Stats.stats.totalTokens
+		print("token obtained")
+		split()
+	# print("func `_process()` got called")
+	if Global.ultraUpgrade && config.data.splitOnUltraWeapon && canSplitOnOrbWeapon:
+		canSplitOnOrbWeapon = false
+		print("ultraUpgrade")
+		split()
+	if Global.ultraBossWon && canSplitOnUltraBossWon:
+		canSplitOnUltraBossWon = false
+		print("ultra bios won")
+		split()
 
 
 ## handles with configs
@@ -144,11 +145,11 @@ func handle_boss_died(_node):
 	split()
 
 func handle_start():
+	oldTokenVar = Stats.stats.totalTokens
 	print("started")
 	if config.data.resetOnDeath || config.data.resetOnExit:
 		print("reset")
 		reset()
-	oldTokenVar = Global.tokens
 	canSplitOnOrbWeapon = true
 	canSplitOnUltraBossWon = true
 	start()

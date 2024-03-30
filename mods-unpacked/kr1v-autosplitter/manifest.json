@@ -2,9 +2,9 @@
 	"name": "autosplitter",
 	"namespace": "kr1v",
 	"version_number": "1.0.0",
-	"description": "autospitter for the hit game windowkill (sponsored by wiicursors)",
+	"description": "autospitter for windowkill",
 	"website_url": "",
-	"dependencies": ["ombrellus-modutils"],
+	"dependencies": [],
 	"extra": {
 		"godot": {
 			"authors": ["kr1v"],
@@ -70,6 +70,13 @@
 						"title": "split when having bought a perk",
 						"type": "boolean",
 						"default": false
+					},
+					"portToConnect": {
+						"title": "the port where the game looks for livesplit (dont touch)",
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 65535,
+						"default": 16834
 					}
 				}
 			}
