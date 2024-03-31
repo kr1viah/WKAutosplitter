@@ -16,7 +16,11 @@ var config
 var canSplitOnOrbWeapon = true
 var canSplitOnUltraBossWon = true
 var canResetInTitle = false
-var amount = 0
+var amount = 1
+var killed_bosses = []
+var spawned_bosses = []
+var canSplitOnToken = true
+var canSplitOnPerk = true
 
 func _init() -> void:
 	print("func _init() just ran")
@@ -95,8 +99,9 @@ func _disable():
 	Global.disable.emit()
 
 func _process(_delta) -> void:
-	if Stats.stats.totalTokens > oldTokenVar && config.data.splitOnToken:
+	if Stats.stats.totalTokens > oldTokenVar && config.data.splitOnToken && canSplitOnToken == true:
 		oldTokenVar = Stats.stats.totalTokens
+		canSplitOnToken = false
 		print("token obtained")
 		split()
 	# print("func `_process()` got called")
@@ -111,9 +116,14 @@ func _process(_delta) -> void:
 
 
 ## handles with configs
-func handle_boss_spawn(_node):
+func handle_boss_spawn(node):
 	if config.data.splitOnBossSpawn:
-		split()
+		if !spawned_bosses.has(node.get_meta("boss_name")) && config.data.splitOnlyOnFirstBossKill:
+			print("hey thats new!")
+			spawned_bosses.append(node.get_meta("boss_name"))
+			split()
+		else: 
+			print("already seen this boss! not splitting")
 
 func handle_ultra_upgrade():
 	if config.data.splitOnOrbWeapon:
@@ -131,7 +141,8 @@ func handle_reset():
 		reset()
 
 func handle_split_on_perk(_node):
-	if config.data.splitOnTokenUpgrade:
+	if config.data.splitOnTokenUpgrade && canSplitOnPerk == true:
+		canSplitOnPerk = false
 		print("perk bought")
 		split()
 		
@@ -140,12 +151,26 @@ func handle_window_broken():
 		print("broken the window")
 		split()
 
-func handle_boss_died(_node):
+func handle_boss_died(node):
+	print(node.get_meta("boss_name"))
 	print("boss fucking died")
-	split()
+	if config.data.splitOnBossKill:
+		if !killed_bosses.has(node.get_meta("boss_name")) && config.data.splitOnlyOnFirstBossKill:
+			print("hey thats new!")
+			canSplitOnPerk = true
+			canSplitOnToken = true
+			killed_bosses.append(node.get_meta("boss_name"))
+			split()
+		else: 
+			print("already seen this boss! not splitting")
+	else: print("didnt split")
 
 func handle_start():
+	canSplitOnPerk = true
+	canSplitOnToken = true
 	oldTokenVar = Stats.stats.totalTokens
+	killed_bosses = []
+	spawned_bosses = []
 	print("started")
 	if config.data.resetOnDeath || config.data.resetOnExit:
 		print("reset")

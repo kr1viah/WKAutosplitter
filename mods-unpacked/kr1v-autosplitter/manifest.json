@@ -1,7 +1,7 @@
 {
 	"name": "autosplitter",
 	"namespace": "kr1v",
-	"version_number": "1.0.0",
+	"version_number": "2.0.0",
 	"description": "autospitter for windowkill",
 	"website_url": "",
 	"dependencies": [],
@@ -23,16 +23,37 @@
 				"properties": {
 					"splitOnDeath": {
 						"title": "split when dying",
+						"description": "best ON for death%",
 						"type": "boolean",
 						"default": false
 					},
 					"resetOnDeath": {
 						"title": "reset on death",
+						"description": "best ON for boss% and OFF for 100%",
 						"type": "boolean",
 						"default": true
 					},
 					"resetOnExit": {
 						"title": "reset on exit",
+						"description": "best ON for boss% and OFF for 100%",
+						"type": "boolean",
+						"default": true
+					},
+					"splitOnBossKill": {
+						"title": "split when killing a boss",
+						"description": "best ON for boss% and OFF for 100%",
+						"type": "boolean",
+						"default": true
+					},
+					"splitOnlyOnFirstBossKill": {
+						"title": "split only on the first instance of a boss",
+						"description": "best ON for orb array% and 100%",
+						"type": "boolean",
+						"default": true
+					},
+					"splitOnAchievement": {
+						"title": "split when getting an achievement",
+						"description": "best ON for 100% and OFF for boss%",
 						"type": "boolean",
 						"default": true
 					},
@@ -48,6 +69,7 @@
 					},
 					"resetOnExit": {
 						"title": "reset on exiting to title screen",
+						"description": "best ON for boss% and OFF for 100%",
 						"type": "boolean",
 						"default": true
 					},
@@ -72,7 +94,8 @@
 						"default": false
 					},
 					"portToConnect": {
-						"title": "the port where the game looks for livesplit (dont touch)",
+						"title": "port",
+						"description": "this is the port the game looks for when\ntrying to connect to livesplit (best untouched)",
 						"type": "integer",
 						"minimum": 0,
 						"maximum": 65535,
