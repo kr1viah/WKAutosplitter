@@ -17,10 +17,10 @@ var canSplitOnOrbWeapon = true
 var canSplitOnUltraBossWon = true
 var canResetInTitle = false
 var amount = 1
+var amountOfTimesSplitOnToken = 0
+var amountOfTimesSplitOnPerk = 0
 var killed_bosses = []
 var spawned_bosses = []
-var canSplitOnToken = true
-var canSplitOnPerk = true
 
 func _init() -> void:
 	print("func _init() just ran")
@@ -39,6 +39,7 @@ func postinit():
 	pass
 func install_script_extensions() -> void:
 	extensions_dir_path = mod_dir_path.path_join("extensions")
+	ModLoaderMod.install_script_extension("res://mods-unpacked/kr1v-autosplitter/extensions/src/autoload/unlocks.gd")
 	ModLoaderMod.install_script_extension("res://mods-unpacked/kr1v-autosplitter/extensions/src/autoload/global.gd")
 	#ModLoaderMod.install_script_extension("res://mods-unpacked/kr1v-autosplitter/extensions/src/element/power_token/powerToken.gd")
 
@@ -48,10 +49,12 @@ func _on_current_config_changed(config: ModConfig) -> void:
 		Global1.apply_config.emit(config) # help
 
 func _ready() -> void:
+	Unlocks.sUnlocked.connect(handle_achievement)
 	config = ModLoaderConfig.get_current_config("kr1v-autosplitter")
 	
 	oldTokenVar = Stats.stats.totalTokens
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	Unlocks.sUnlocked.connect(handle_achievement)
 	Events.bossSpawned.connect(handle_boss_spawn) # 
 	Events.bossKilled.connect(handle_boss_died) #
 	Events.runStarted.connect(handle_start) #
@@ -99,9 +102,9 @@ func _disable():
 	Global.disable.emit()
 
 func _process(_delta) -> void:
-	if Stats.stats.totalTokens > oldTokenVar && config.data.splitOnToken && canSplitOnToken == true:
+	if Stats.stats.totalTokens > oldTokenVar && config.data.splitOnToken:
 		oldTokenVar = Stats.stats.totalTokens
-		canSplitOnToken = false
+		amountOfTimesSplitOnToken += 1
 		print("token obtained")
 		split()
 	# print("func `_process()` got called")
@@ -124,7 +127,6 @@ func handle_boss_spawn(node):
 			split()
 		else: 
 			print("already seen this boss! not splitting")
-
 func handle_ultra_upgrade():
 	if config.data.splitOnOrbWeapon:
 		print("ultra upgrade gained")
@@ -141,8 +143,7 @@ func handle_reset():
 		reset()
 
 func handle_split_on_perk(_node):
-	if config.data.splitOnTokenUpgrade && canSplitOnPerk == true:
-		canSplitOnPerk = false
+	if config.data.splitOnTokenUpgrade:
 		print("perk bought")
 		split()
 		
@@ -150,15 +151,16 @@ func handle_window_broken():
 	if config.data.splitOnBrokenWindow:
 		print("broken the window")
 		split()
-
+func handle_achievement(_item):
+	if config.data.splitOnAchievement:
+		print("oh my god theyre insane (they got an achievement)")
+		split()
 func handle_boss_died(node):
 	print(node.get_meta("boss_name"))
 	print("boss fucking died")
 	if config.data.splitOnBossKill:
 		if !killed_bosses.has(node.get_meta("boss_name")) && config.data.splitOnlyOnFirstBossKill:
 			print("hey thats new!")
-			canSplitOnPerk = true
-			canSplitOnToken = true
 			killed_bosses.append(node.get_meta("boss_name"))
 			split()
 		else: 
@@ -166,8 +168,8 @@ func handle_boss_died(node):
 	else: print("didnt split")
 
 func handle_start():
-	canSplitOnPerk = true
-	canSplitOnToken = true
+	amountOfTimesSplitOnPerk = 0
+	amountOfTimesSplitOnToken = 0
 	oldTokenVar = Stats.stats.totalTokens
 	killed_bosses = []
 	spawned_bosses = []

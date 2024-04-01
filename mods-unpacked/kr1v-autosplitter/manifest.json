@@ -84,12 +84,14 @@
 						"default": false
 					},
 					"splitOnToken": {
-						"title": "split upon collecting a token",
+						"title": "split on token",
+						"description": "best ON for orb array% and OFF for the rest",
 						"type": "boolean",
 						"default": false
 					},
 					"splitOnTokenUpgrade": {
-						"title": "split when having bought a perk",
+						"title": "split on perk",
+						"description": "best ON for orb array% and OFF for the rest",
 						"type": "boolean",
 						"default": false
 					},

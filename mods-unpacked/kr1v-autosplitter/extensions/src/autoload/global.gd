@@ -1,6 +1,6 @@
 # Our base script is the original game script.
 extends "res://src/autoload/global.gd"
-
+var lololol
 # This overrides the method with the same name, changing the value of its argument:
 func _ready():
 	super._ready()
