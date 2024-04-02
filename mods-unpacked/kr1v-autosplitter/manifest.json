@@ -22,7 +22,7 @@
 				"type": "object",
 				"properties": {
 					"splitOnDeath": {
-						"title": "split when dying",
+						"title": "split on death",
 						"description": "best ON for death%",
 						"type": "boolean",
 						"default": false
@@ -39,47 +39,47 @@
 						"type": "boolean",
 						"default": true
 					},
-					"splitOnBossKill": {
-						"title": "split when killing a boss",
-						"description": "best ON for boss% and OFF for 100%",
-						"type": "boolean",
-						"default": true
-					},
-					"splitOnlyOnFirstBossKill": {
-						"title": "split only on the first instance of a boss",
-						"description": "best ON for orb array% and 100%",
-						"type": "boolean",
-						"default": true
-					},
-					"splitOnAchievement": {
-						"title": "split when getting an achievement",
-						"description": "best ON for 100% and OFF for boss%",
-						"type": "boolean",
-						"default": true
-					},
-					"splitOnEscaped": {
-						"title": "split when having escaped the window",
-						"type": "boolean",
-						"default": false
-					},
-					"splitOnBrokenWindow": {
-						"title": "split when having broken the window",
-						"type": "boolean",
-						"default": false
-					},
 					"resetOnExit": {
 						"title": "reset on exiting to title screen",
 						"description": "best ON for boss% and OFF for 100%",
 						"type": "boolean",
 						"default": true
 					},
+					"splitOnBossKill": {
+						"title": "split on boss kill",
+						"description": "best ON for boss% and OFF for 100%",
+						"type": "boolean",
+						"default": true
+					},
+					"splitOnlyOnFirstBossKill": {
+						"title": "only split on first boss spawn/kill",
+						"description": "best ON for orb array% and 100%",
+						"type": "boolean",
+						"default": true
+					},
+					"splitOnAchievement": {
+						"title": "split on achievement",
+						"description": "best ON for 100% and OFF for boss%",
+						"type": "boolean",
+						"default": false
+					},
+					"splitOnEscaped": {
+						"title": "split on escaped window",
+						"type": "boolean",
+						"default": false
+					},
+					"splitOnBrokenWindow": {
+						"title": "split on broken window",
+						"type": "boolean",
+						"default": false
+					},
 					"splitOnBossSpawn": {
-						"title": "split when a boss spawns",
+						"title": "split on boss spawn",
 						"type": "boolean",
 						"default": false
 					},
 					"splitOnUltraWeapon": {
-						"title": "split on gaining the orb weapon",
+						"title": "split on orb weapon",
 						"type": "boolean",
 						"default": false
 					},
@@ -97,7 +97,7 @@
 					},
 					"portToConnect": {
 						"title": "port",
-						"description": "this is the port the game looks for when\ntrying to connect to livesplit (best untouched)",
+						"description": "this is the port the game looks for when trying to connect to livesplit (best untouched)",
 						"type": "integer",
 						"minimum": 0,
 						"maximum": 65535,

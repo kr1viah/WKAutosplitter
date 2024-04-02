@@ -102,7 +102,7 @@ func _disable():
 	Global.disable.emit()
 
 func _process(_delta) -> void:
-	if Stats.stats.totalTokens > oldTokenVar && config.data.splitOnToken:
+	if Stats.stats.totalTokens > oldTokenVar && amountOfTimesSplitOnToken <= 4 && config.data.splitOnToken:
 		oldTokenVar = Stats.stats.totalTokens
 		amountOfTimesSplitOnToken += 1
 		print("token obtained")
@@ -112,10 +112,10 @@ func _process(_delta) -> void:
 		canSplitOnOrbWeapon = false
 		print("ultraUpgrade")
 		split()
-	if Global.ultraBossWon && canSplitOnUltraBossWon:
-		canSplitOnUltraBossWon = false
-		print("ultra bios won")
-		split()
+	#if Global.ultraBossWon && canSplitOnUltraBossWon:
+	#	canSplitOnUltraBossWon = false
+	#	print("ultra bios won")
+	#	split()
 
 
 ## handles with configs
@@ -143,7 +143,7 @@ func handle_reset():
 		reset()
 
 func handle_split_on_perk(_node):
-	if config.data.splitOnTokenUpgrade:
+	if config.data.splitOnTokenUpgrade && !config.data.splitOnlyOnFirstBossKill:
 		print("perk bought")
 		split()
 		
