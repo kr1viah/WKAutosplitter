@@ -2,7 +2,7 @@
 	"name": "autosplitter",
 	"namespace": "kr1v",
 	"version_number": "2.0.0",
-	"description": "autospitter for windowkill",
+	"description": "autospitter go brrr",
 	"website_url": "",
 	"dependencies": [],
 	"extra": {
@@ -58,7 +58,7 @@
 						"default": true
 					},
 					"splitOnAchievement": {
-						"title": "split on achievement",
+						"title": "split on unlocks",
 						"description": "best ON for 100% and OFF for boss%",
 						"type": "boolean",
 						"default": false
