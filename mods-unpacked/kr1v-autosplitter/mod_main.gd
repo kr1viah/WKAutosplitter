@@ -60,6 +60,7 @@ func _ready() -> void:
 	Events.runStarted.connect(handle_start) #
 	Events.runEnded.connect(handle_game_over)
 	Events.perkBought.connect(handle_split_on_perk)
+	Events.perkManifested.connect(handle_split_on_perk)
 	Events.titleReturn.connect(handle_reset)
 	Events.windowBroken.connect(handle_window_broken)
 	Events.windowEscaped.connect(handle_escape)
@@ -102,7 +103,7 @@ func _disable():
 	Global.disable.emit()
 
 func _process(_delta) -> void:
-	if Stats.stats.totalTokens > oldTokenVar && amountOfTimesSplitOnToken <= 4 && config.data.splitOnToken:
+	if Stats.stats.totalTokens > oldTokenVar && amountOfTimesSplitOnToken < 4 && config.data.splitOnToken:
 		oldTokenVar = Stats.stats.totalTokens
 		amountOfTimesSplitOnToken += 1
 		print("token obtained")
@@ -143,7 +144,8 @@ func handle_reset():
 		reset()
 
 func handle_split_on_perk(_node):
-	if config.data.splitOnTokenUpgrade && !config.data.splitOnlyOnFirstBossKill:
+	if config.data.splitOnTokenUpgrade && amountOfTimesSplitOnPerk < 4:
+		amountOfTimesSplitOnPerk += 1
 		print("perk bought")
 		split()
 		

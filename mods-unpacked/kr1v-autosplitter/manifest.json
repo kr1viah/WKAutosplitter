@@ -52,8 +52,8 @@
 						"default": true
 					},
 					"splitOnlyOnFirstBossKill": {
-						"title": "only split on first boss spawn/kill",
-						"description": "best ON for orb array% and 100%",
+						"title": "only split on first boss",
+						"description": "best ON for orb array% and 100%. with this setting on, it will only split on the first instance of a boss, may that be kill or spawn",
 						"type": "boolean",
 						"default": true
 					},
