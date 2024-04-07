@@ -113,11 +113,10 @@ func _process(_delta) -> void:
 		canSplitOnOrbWeapon = false
 		print("ultraUpgrade")
 		split()
-	#if Global.ultraBossWon && canSplitOnUltraBossWon:
-	#	canSplitOnUltraBossWon = false
-	#	print("ultra bios won")
-	#	split()
-
+	if Global.ultraBossWon && canSplitOnUltraBossWon:
+		canSplitOnUltraBossWon = false
+		print("ultra bios won")
+		split()
 
 ## handles with configs
 func handle_boss_spawn(node):
