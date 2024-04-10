@@ -1,7 +1,7 @@
 {
 	"name": "autosplitter",
 	"namespace": "kr1v",
-	"version_number": "2.0.1",
+	"version_number": "2.1.0",
 	"description": "autospitter go brrr",
 	"website_url": "",
 	"dependencies": [],
@@ -92,6 +92,11 @@
 					"splitOnTokenUpgrade": {
 						"title": "split on perk",
 						"description": "best ON for orb array% and OFF for the rest",
+						"type": "boolean",
+						"default": false
+					},
+					"splitOnUltraVirusSmacked": {
+						"title": "split on ??? hit",
 						"type": "boolean",
 						"default": false
 					},
