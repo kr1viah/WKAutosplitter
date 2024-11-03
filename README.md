@@ -4,12 +4,12 @@ Usage guide:
 1. Get Livesplit from [their website](https://livesplit.org/)
 2. Download [the latest release](https://github.com/kr1viah/WKAutosplitter/releases) of my autosplitter mod
 3. Put the mod in /Windowkill/mods/
-4. Open livesplit and right click -> control -> start TCP server
+4. Open livesplit and right click -> control -> start livesplit server
 5. Launch the game with this mod installed
 Repeat steps 4 and 5 everytime you want to use this mod in-game
 
 Some things to note:
-You can tweak the settings in game at settings -> mods -> autosplitter gear icon
+You can tweak the settings in game at any time in settings -> mods -> autosplitter gear icon
 
   Most of the settings there are pretty self-explanitory, but here's a list of the settings and what they do
 
